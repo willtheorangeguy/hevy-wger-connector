@@ -1,0 +1,32 @@
+name: hevy-wger-connector-tests
+services:
+  mock-hevy:
+    image: python:3.12.13-alpine
+    working_dir: /tests
+    command: [python, mock_hevy.py]
+    volumes: ['./tests:/tests:ro']
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=5)"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+  test:
+    build: .
+    image: hevy-wger-connector:local
+    user: '0:0'
+    entrypoint: [python, -m, pytest]
+    command: [-q, --junitxml=/reports/junit.xml]
+    environment:
+      HEVY_API_KEY: mock-hevy-key
+      HEVY_BASE_URL: http://mock-hevy:8080
+      WGER_BASE_URL: http://host.docker.internal:8101
+      TEST_CREDENTIALS_FILE: /integration/test-credentials.json
+      PYTHONPATH: /app/src:/app/tests
+    extra_hosts: ['host.docker.internal:host-gateway']
+    volumes:
+      - ./src:/app/src:ro
+      - ./tests:/app/tests:ro
+      - ./runtime:/integration:ro
+      - ./reports:/reports
+    depends_on:
+      mock-hevy: {condition: service_healthy}

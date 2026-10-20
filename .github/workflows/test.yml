@@ -1,0 +1,41 @@
+name: Connector tests
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.lock && pip install --no-deps .
+      - run: pytest -q -m 'not integration' --junitxml=reports/unit.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-reports
+          path: reports/
+  integration:
+    # This standalone repo cannot assume the private sibling harness is public.
+    if: github.event_name == 'workflow_dispatch' && vars.WGER_HARNESS_REPOSITORY != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: hevy-wger-connector
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.WGER_HARNESS_REPOSITORY }}
+          token: ${{ secrets.WGER_HARNESS_TOKEN || github.token }}
+          path: wger-addon-harness
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python test_harness.py
+        working-directory: hevy-wger-connector
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-reports
+          path: hevy-wger-connector/reports/
