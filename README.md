@@ -8,6 +8,36 @@ Features include exercise mapping review, initial historical import, 15-minute
 polling, manual synchronization, configurable deletion behavior, and durable
 recovery after interrupted imports. No web dashboard is included.
 
+Licensed under [MIT](LICENSE). See [release instructions](RELEASING.md) for
+publishing the repository and its GHCR container.
+
+## Published container
+
+After the first GitHub release publishes successfully, the image is available at
+`ghcr.io/willtheorangeguy/hevy-wger-connector:0.1.0` for Linux amd64 and arm64.
+This repository is currently prepared for its first publication; the image does
+not exist until that release workflow completes.
+
+Copy `.env.example` to `.env` and configure the credentials described below, then:
+
+```powershell
+docker compose -f compose.ghcr.yaml pull
+docker compose -f compose.ghcr.yaml run --rm connector check --json
+docker compose -f compose.ghcr.yaml run --rm connector preview --json
+```
+
+Review and approve mappings, then run `sync` and `up -d` using the same
+`-f compose.ghcr.yaml` option. Set `CONNECTOR_VERSION` in `.env` to select a
+specific release; it defaults to `0.1.0`. `CONNECTOR_IMAGE` overrides the registry
+and repository. Stable releases also publish `0.1` and `latest` aliases;
+prereleases publish only their exact version. Use a fixed version for repeatable
+deployments.
+
+The published and source-build Compose files use the same project and state
+volume. Choose one file for your deployment; stop the service before switching
+and retain its volume. For an upgrade, back up state and wger, update
+`CONNECTOR_VERSION`, then run `pull` and `up -d` with the GHCR Compose file.
+
 ## Connect your accounts
 
 Requires Docker Desktop/Linux containers, Docker Compose v2+, a Hevy Pro API key,
@@ -222,7 +252,8 @@ local conflicts, UTC month boundaries, and lost responses after real wger writes
 The production service stays unconfigured until you provide your account keys;
 test credentials are never copied to `.env`.
 
-GitHub Actions runs unit tests on pushes and pull requests. The optional manual
+GitHub Actions runs unit tests and a container startup check on pushes and pull
+requests, and repeats them before release publishing. The optional manual
 integration job requires a repository variable `WGER_HARNESS_REPOSITORY` naming
 the accessible harness repository (and a read-only `WGER_HARNESS_TOKEN` secret if private). It runs
 the same local integration runner. This repository does not assume the separate

@@ -5,7 +5,10 @@ Linux containers, and the existing wger harness's pinned 2.8.0-dev.1 image.
 
 ## Automated checks
 
-- 29 unit tests passed in the final unit run (`reports/unit.xml`).
+- 29 connector unit tests passed in the full harness run. Release preparation
+  added ten version/tag checks; the subsequent unit-only run passed all **39**
+  tests in **1.18 seconds** (`reports/unit.xml`), with three integration cases
+  deselected.
 - All three destination integration cases passed against a real wger instance and a deterministic
   mock of Hevy's documented public API. They cover the complete review/import/
   edit/delete lifecycle and simulated lost responses after committed UUID-log
@@ -21,11 +24,13 @@ Linux containers, and the existing wger harness's pinned 2.8.0-dev.1 image.
   pagination, failed-page checkpoints, rate limiting, account binding and locks.
 
 The complete local runner (`python test_harness.py`) writes `reports/junit.xml`.
-The latest local run passed **all 32 tests together** (29 unit tests and three
+The full local harness run passed **all 32 tests together** (29 unit tests and three
 wger integration cases) in **223.62 seconds**, with zero failures, errors or
 skipped tests. It used `http://mock-hevy:8080` with a dummy API key and the local
 Docker wger harness at `http://host.docker.internal:8101`; the production `.env`
 was not loaded. The separate unit-only report is `reports/unit.xml`.
+The three integration cases were not repeated for the release workflow and
+documentation changes; synchronization code did not change.
 
 ## CLI and container checks
 
@@ -38,6 +43,10 @@ was not loaded. The separate unit-only report is `reports/unit.xml`.
 - The wger harness repository has no tracked modifications. Test accounts are
   created separately and removed after the integration runner; the demo user is
   preserved. Production `.env` contains no test account credentials.
+- Release preparation passed `actionlint 1.7.12` for both GitHub workflows and
+  validated `compose.ghcr.yaml`. The release metadata command accepted `v0.1.0`
+  and generated the expected lowercase GHCR image path. The rebuilt packaged CLI
+  starts successfully and runs with UID 10001.
 
 ## Limits of validation
 
