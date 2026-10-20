@@ -1,0 +1,25 @@
+# Add alongside your existing wger Compose file, or copy this service and volume
+# into that file. Append wger.env.example values to your existing .env.
+services:
+  hevy-connector:
+    image: ${HEVY_CONNECTOR_IMAGE:-ghcr.io/willtheorangeguy/hevy-wger-connector}:${HEVY_CONNECTOR_VERSION:-0.1.0}
+    init: true
+    restart: unless-stopped
+    environment:
+      HEVY_API_KEY: ${HEVY_API_KEY:?Set HEVY_API_KEY in your wger .env}
+      WGER_BASE_URL: ${HEVY_WGER_BASE_URL:-http://web:8000}
+      WGER_TOKEN: ${HEVY_WGER_TOKEN:?Set HEVY_WGER_TOKEN in your wger .env}
+      SYNC_POLICY: ${HEVY_SYNC_POLICY:-update_preserve_deleted}
+      SYNC_INTERVAL_SECONDS: ${HEVY_SYNC_INTERVAL_SECONDS:-900}
+      DATA_DIR: /data
+    volumes:
+      - hevy_connector_state:/data
+    healthcheck:
+      test: [CMD, hevy-wger, status, --health]
+      interval: 60s
+      timeout: 10s
+      start_period: 120s
+      retries: 3
+
+volumes:
+  hevy_connector_state:

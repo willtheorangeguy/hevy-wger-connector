@@ -1,7 +1,9 @@
+# Developer setup: docker compose -f compose.build.yaml up --build -d
 name: hevy-wger-connector
 services:
   connector:
-    image: ${CONNECTOR_IMAGE:-ghcr.io/willtheorangeguy/hevy-wger-connector}:${CONNECTOR_VERSION:-0.1.0}
+    build: .
+    image: hevy-wger-connector:local
     env_file: .env
     init: true
     restart: unless-stopped

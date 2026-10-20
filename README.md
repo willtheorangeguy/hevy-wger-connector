@@ -11,23 +11,37 @@ recovery after interrupted imports. No web dashboard is included.
 Licensed under [MIT](LICENSE). See [release instructions](RELEASING.md) for
 publishing the repository and its GHCR container.
 
-## Published container
+## Quick start: two files
 
 After the first GitHub release publishes successfully, the image is available at
 `ghcr.io/willtheorangeguy/hevy-wger-connector:0.1.0` for Linux amd64 and arm64.
 This repository is currently prepared for its first publication; the image does
 not exist until that release workflow completes.
 
-Copy `.env.example` to `.env` and configure the credentials described below, then:
+You only need [docker-compose.yml](docker-compose.yml) and
+[.env.example](.env.example), saved as `.env`, in an empty folder. No Python,
+source checkout or local image build is required. Both files will also be attached
+to each GitHub release. Fill in `HEVY_API_KEY`, `WGER_BASE_URL` and `WGER_TOKEN`
+in `.env` (see credential instructions below), then:
 
 ```powershell
-docker compose -f compose.ghcr.yaml pull
-docker compose -f compose.ghcr.yaml run --rm connector check --json
-docker compose -f compose.ghcr.yaml run --rm connector preview --json
+docker compose pull
+docker compose run --rm connector check --json
+docker compose run --rm connector preview --json
+docker compose run --rm connector mappings suggest --json
 ```
 
-Review and approve mappings, then run `sync` and `up -d` using the same
-`-f compose.ghcr.yaml` option. Set `CONNECTOR_VERSION` in `.env` to select a
+Approve the exercise mappings you have reviewed, import, and start polling:
+
+```powershell
+docker compose run --rm connector mappings set HEVY_TEMPLATE_ID WGER_EXERCISE_ID
+docker compose run --rm connector sync --json
+docker compose up -d
+```
+
+Repeat `mappings set` for each exercise that needs a mapping. `up -d` alone starts
+the service, but importing an exercise requires an approved mapping first.
+Set `CONNECTOR_VERSION` in `.env` to select a
 specific release; it defaults to `0.1.0`. `CONNECTOR_IMAGE` overrides the registry
 and repository. Stable releases also publish `0.1` and `latest` aliases;
 prereleases publish only their exact version. Use a fixed version for repeatable
@@ -36,7 +50,47 @@ deployments.
 The published and source-build Compose files use the same project and state
 volume. Choose one file for your deployment; stop the service before switching
 and retain its volume. For an upgrade, back up state and wger, update
-`CONNECTOR_VERSION`, then run `pull` and `up -d` with the GHCR Compose file.
+`CONNECTOR_VERSION`, then run `docker compose pull` and `docker compose up -d`.
+
+## Add to an existing wger Compose stack
+
+Use [examples/docker-compose.wger.yml](examples/docker-compose.wger.yml) to add a
+`hevy-connector` service to your existing stack. Either copy its **service and
+volume** sections into your wger Compose file, or save it beside that file as
+`docker-compose.hevy.yml`. Append the entries from
+[examples/wger.env.example](examples/wger.env.example) to your existing wger
+`.env` and fill in the API key and token. Keep your existing wger settings.
+
+`HEVY_WGER_BASE_URL=http://web:8000` connects directly to a wger service called
+`web` on its internal port 8000. Change it to match your actual service and
+container port. The connector must share a Docker network with that service;
+the example joins the default Compose network. If your wger service uses a custom
+network, add that same `networks:` entry to `hevy-connector`. The example passes
+only connector settings into its container and publishes no ports.
+
+If you copied the sections into your existing Compose file:
+
+```powershell
+docker compose pull hevy-connector
+docker compose run --rm --no-deps hevy-connector check --json
+docker compose run --rm --no-deps hevy-connector preview --json
+docker compose run --rm --no-deps hevy-connector mappings suggest --json
+docker compose run --rm --no-deps hevy-connector mappings set HEVY_TEMPLATE_ID WGER_EXERCISE_ID
+docker compose run --rm --no-deps hevy-connector sync --json
+docker compose up -d --no-deps hevy-connector
+```
+
+Start wger first. Repeat `mappings set` for all required exercises. If you kept the
+connector as a separate file, add
+`-f docker-compose.yml -f docker-compose.hevy.yml` after `docker compose` in
+each command; replace the first filename with your wger Compose filename.
+This uses Compose's [standard file merging](https://docs.docker.com/compose/how-tos/multiple-compose-files/merge/).
+
+The integration example uses `HEVY_` prefixes for its wger token, URL and sync
+options to avoid colliding with wger's settings. Its `hevy_connector_state` volume
+must be retained across upgrades. If you already ran a standalone connector,
+stop it before switching and reuse/migrate its state volume; a fresh volume loses
+the existing import ownership records. Use one active connector per account pair.
 
 ## Connect your accounts
 
@@ -46,7 +100,6 @@ and a wger API token. The tested destination is the sibling harness's pinned
 session APIs; `check` validates the required schema before the first import.
 
 ```powershell
-cd hevy-wger-connector
 Copy-Item .env.example .env
 ```
 
@@ -73,7 +126,7 @@ For a remote wger deployment, set its actual HTTPS base URL instead. Do not incl
 inside a container `localhost` refers to that container.
 
 ```powershell
-docker compose build
+docker compose pull
 docker compose run --rm connector check --json
 docker compose run --rm connector preview --json
 docker compose run --rm connector mappings suggest --json

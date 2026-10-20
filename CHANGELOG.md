@@ -10,3 +10,5 @@
 - Run with Docker Compose, manually or on a 15-minute schedule.
 - Test against a mock Hevy HTTP API and an isolated Docker wger harness.
 - Publish tested amd64/arm64 containers to GHCR when a GitHub release is published.
+- Set up with just `.env` and `docker-compose.yml`, or add the connector to an
+  existing wger Compose stack using the supplied service and environment examples.

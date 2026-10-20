@@ -1,6 +1,13 @@
 # Contributing
 
-Use Python 3.12 or the supplied Docker test runner. For a local Python environment:
+Use Python 3.12 or the supplied Docker test runner.
+
+End users use `docker-compose.yml` to pull GHCR images. To build and run the
+connector from source, use `docker compose -f compose.build.yaml build` and add
+`-f compose.build.yaml` to subsequent connector commands. `compose.test.yaml`
+continues to build its own local test image.
+
+For a local Python environment:
 
 ```powershell
 python -m venv .venv
