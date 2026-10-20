@@ -46,7 +46,22 @@ print('CONNECTOR_TEST_JSON='+json.dumps({'accounts':accounts,'exercise_ids':list
     line = next(line for line in result.stdout.splitlines() if line.startswith("CONNECTOR_TEST_JSON="))
     credentials = runtime / "test-credentials.json"
     credentials.write_text(line.split("=", 1)[1], encoding="utf-8")
-    compose = ["docker", "compose", "-f", "compose.test.yaml"]
+    # Use Docker's service network on Linux and Docker Desktop alike. The
+    # harness intentionally publishes its frontend only on host loopback.
+    harness_config = run(
+        ["docker", "compose", "-f", str(harness / "compose.yaml"), "config", "--format", "json"],
+        text=True, capture_output=True,
+    )
+    network = json.loads(harness_config.stdout)["networks"]["default"]["name"]
+    override = runtime / "test-wger.compose.json"
+    override.write_text(json.dumps({
+        "services": {"test": {
+            "environment": {"WGER_BASE_URL": "http://web:8000"},
+            "networks": ["default", "wger-harness"],
+        }},
+        "networks": {"wger-harness": {"external": True, "name": network}},
+    }), encoding="utf-8")
+    compose = ["docker", "compose", "-f", "compose.test.yaml", "-f", str(override)]
     try:
         run(compose + ["build", "test"])
         run(compose + ["up", "-d", "--wait", "mock-hevy"])
