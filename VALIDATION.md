@@ -20,12 +20,12 @@ Linux containers, and the existing wger harness's pinned 2.8.0-dev.1 image.
   rep ranges, fractional kilogram precision, signed assistance metadata, moving
   pagination, failed-page checkpoints, rate limiting, account binding and locks.
 
-The complete integration runner writes `reports/junit.xml`. The unit-only report
-contains the final 29-case unit collection; integration reports may also include
-the unit collection that existed when that run began. The final integration run
-reported 30 passing cases (27 collected unit cases plus the three integration
-cases) in 239.56 seconds; the separate final unit run includes two additional
-passing discovery/checkpoint cases. In total, all 32 distinct cases passed.
+The complete local runner (`python test_harness.py`) writes `reports/junit.xml`.
+The latest local run passed **all 32 tests together** (29 unit tests and three
+wger integration cases) in **223.62 seconds**, with zero failures, errors or
+skipped tests. It used `http://mock-hevy:8080` with a dummy API key and the local
+Docker wger harness at `http://host.docker.internal:8101`; the production `.env`
+was not loaded. The separate unit-only report is `reports/unit.xml`.
 
 ## CLI and container checks
 

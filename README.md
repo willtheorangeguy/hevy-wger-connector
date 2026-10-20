@@ -191,6 +191,12 @@ State and session notes intentionally contain the user's workout data.
 
 No real Hevy account/key is needed for automated tests:
 
+**Mock Hevy HTTP API → connector → local Docker wger harness → PostgreSQL.**
+The destination is the actual wger application running as a sandbox, so integration
+tests verify real API writes and stored workout data. `compose.test.yaml` supplies
+a dummy Hevy key, points to the local mock server and harness, and does not load
+the production `.env`.
+
 ```powershell
 python test_harness.py
 ```
