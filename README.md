@@ -20,6 +20,7 @@ You only need [docker-compose.yml](docker-compose.yml) and
 [.env.example](.env.example), saved as `.env`, in an empty folder. No Python,
 source checkout or local image build is required. Download both files from the
 [v0.1.0 release](https://github.com/willtheorangeguy/hevy-wger-connector/releases/tag/v0.1.0).
+The release download is named `env.example`; rename it to `.env`.
 Fill in `HEVY_API_KEY`, `WGER_BASE_URL` and `WGER_TOKEN`
 in `.env` (see credential instructions below), then:
 

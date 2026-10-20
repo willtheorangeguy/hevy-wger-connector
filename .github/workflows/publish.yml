@@ -110,6 +110,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
+          cp .env.example env.example
           gh release upload "$RELEASE_TAG" --clobber \
-            docker-compose.yml .env.example \
+            docker-compose.yml env.example \
             examples/docker-compose.wger.yml examples/wger.env.example

@@ -90,5 +90,7 @@ directly so it works with the loopback-only frontend on Linux as well as Docker
 Desktop. Pytest was updated to 9.0.3 to resolve the reported temporary-directory
 vulnerability; GitHub marks the alert fixed.
 
-Release container publication and setup-file attachment run after publishing
-the GitHub release. Check that workflow and package visibility before deploying.
+The [v0.1.0 release workflow](https://github.com/willtheorangeguy/hevy-wger-connector/actions/runs/39512905197)
+passed, published amd64/arm64 images with attestations, and attached all four
+setup files. An anonymous GHCR manifest request returned HTTP 200. The release
+index digest is `sha256:b41aee536c13e1a410a1d0cec70aa4b38c24427481cb3661796619178003ef9b`.

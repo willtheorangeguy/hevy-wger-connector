@@ -57,8 +57,8 @@ The release gate does not require the separately configured integration job;
 run the full harness before tagging as described above.
 
 After the container publishes, a separate job attaches `docker-compose.yml`,
-`.env.example`, `docker-compose.wger.yml` and `wger.env.example` to the release.
-End users can download the two standalone files, rename `.env.example` to `.env`,
+`env.example`, `docker-compose.wger.yml` and `wger.env.example` to the release.
+End users can download the two standalone files, rename `env.example` to `.env`,
 enter their credentials, and use `docker compose` directly. Existing wger users
 can use the two integration examples instead. Only this asset-upload job has
 `contents: write`; the container publishing job retains its package permissions.
