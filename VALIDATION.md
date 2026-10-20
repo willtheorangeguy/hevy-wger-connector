@@ -94,3 +94,8 @@ The [v0.1.0 release workflow](https://github.com/willtheorangeguy/hevy-wger-conn
 passed, published amd64/arm64 images with attestations, and attached all four
 setup files. An anonymous GHCR manifest request returned HTTP 200. The release
 index digest is `sha256:b41aee536c13e1a410a1d0cec70aa4b38c24427481cb3661796619178003ef9b`.
+
+The updated complete suite also passed locally: **42 passed in 457.78 seconds**,
+using mock Hevy and dedicated accounts in the Docker wger harness. The runner
+removed its test accounts and stopped the mock service afterward. The published
+GHCR image was pulled locally and its packaged CLI started successfully.
