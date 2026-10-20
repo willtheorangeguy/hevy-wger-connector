@@ -80,5 +80,15 @@ are included; the reported integration cases invoke the same sync engine directl
 Other wger releases have not been tested. Check required API compatibility before
 using a different release.
 
-GitHub release events, `GITHUB_TOKEN` permissions and GHCR uploads have not been
-executed: this preparation created no GitHub repository, release or remote image.
+## GitHub publication checks (2026-10-20)
+
+All three repositories are public on GitHub. Both harness integration workflows
+passed. The connector's [hosted validation run](https://github.com/willtheorangeguy/hevy-wger-connector/actions/runs/39512185931)
+passed unit tests, Compose validation, container startup and the complete mock
+Hevy-to-wger suite. The integration runner joins the harness's Docker network
+directly so it works with the loopback-only frontend on Linux as well as Docker
+Desktop. Pytest was updated to 9.0.3 to resolve the reported temporary-directory
+vulnerability; GitHub marks the alert fixed.
+
+Release container publication and setup-file attachment run after publishing
+the GitHub release. Check that workflow and package visibility before deploying.

@@ -2,17 +2,18 @@
 
 ## First publication
 
-The local `origin` is prepared for
-`https://github.com/willtheorangeguy/hevy-wger-connector.git`.
-Create that empty GitHub repository without adding a README, license or gitignore,
-then push this repository's existing history. With GitHub CLI:
+The public repository is
+`https://github.com/willtheorangeguy/hevy-wger-connector`.
+For a new fork, create an empty GitHub repository without adding a README,
+license or gitignore, then push the existing history. With GitHub CLI (replace
+the owner and repository with your own):
 
 ```powershell
 gh repo create willtheorangeguy/hevy-wger-connector --public --description "Docker connector importing Hevy strength workouts into wger"
 git push -u origin main
 ```
 
-These commands publish the repository; preparation does not run them. Choose
+These commands publish a new repository. Choose
 `--private` instead if that is the intended visibility. Enable GitHub Actions if
 organization policy disables it. No registry password or personal access token
 is required: the publishing job uses its scoped `GITHUB_TOKEN` with

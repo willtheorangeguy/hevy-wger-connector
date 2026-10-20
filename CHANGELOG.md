@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — prepared for first release
+## 0.1.0 — 2026-10-20
 
 - Import Hevy strength history and saved routines into wger through its API.
 - Review exercise mappings before import; preserve individual sets, supersets,
