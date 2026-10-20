@@ -16,7 +16,7 @@ Repository = "https://github.com/willtheorangeguy/hevy-wger-connector"
 Issues = "https://github.com/willtheorangeguy/hevy-wger-connector/issues"
 
 [project.optional-dependencies]
-test = ["pytest==8.4.2"]
+test = ["pytest==9.0.3"]
 
 [project.scripts]
 hevy-wger = "hevy_wger.cli:main"
