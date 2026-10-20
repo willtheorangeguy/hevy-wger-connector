@@ -29,7 +29,9 @@ integration testing works without publishing the harness.
 
 1. Update both `pyproject.toml` and `src/hevy_wger/__init__.py` to the same version.
    The initial release is already `0.1.0`. Update `CHANGELOG.md` and the default
-   `CONNECTOR_VERSION` example in `compose.ghcr.yaml` and the README as appropriate.
+   version defaults in `docker-compose.yml`, `.env.example`,
+   `examples/docker-compose.wger.yml`, `examples/wger.env.example` and the README
+   as appropriate.
 2. Run `python test_harness.py` with the sibling harness present. Review
    `reports/junit.xml`, update `VALIDATION.md`, and commit the release changes.
 3. Push `main`, wait for CI, then tag the reviewed commit and push the tag:
@@ -53,6 +55,13 @@ provenance. Actions are pinned to commit SHAs; Dependabot proposes weekly update
 The release gate does not require the separately configured integration job;
 run the full harness before tagging as described above.
 
+After the container publishes, a separate job attaches `docker-compose.yml`,
+`.env.example`, `docker-compose.wger.yml` and `wger.env.example` to the release.
+End users can download the two standalone files, rename `.env.example` to `.env`,
+enter their credentials, and use `docker compose` directly. Existing wger users
+can use the two integration examples instead. Only this asset-upload job has
+`contents: write`; the container publishing job retains its package permissions.
+
 Stable `v0.1.0` publishes `:0.1.0`, `:0.1` and `:latest`. A prerelease publishes
 only its full version, such as `:0.2.0-rc.1`. Stable aliases follow the last stable
 release published, including a republished older release. Deploy by exact version
@@ -68,8 +77,8 @@ pulls require a GitHub login with package read access.
 
 ```powershell
 docker buildx imagetools inspect ghcr.io/willtheorangeguy/hevy-wger-connector:0.1.0
-docker compose -f compose.ghcr.yaml pull
-docker compose -f compose.ghcr.yaml run --rm connector --help
+docker compose pull
+docker compose run --rm connector --help
 ```
 
 For a fork, update the project URLs and Compose image default. Publishing itself
@@ -79,7 +88,8 @@ uses the current GitHub repository's lowercase name automatically.
 
 ```powershell
 docker run --rm -v "${PWD}:/repo" -w /repo rhysd/actionlint:1.7.12
-docker compose -f compose.ghcr.yaml config --quiet
+docker compose config --quiet
+docker compose -f compose.build.yaml config --quiet
 docker compose -f compose.test.yaml build test
 docker compose -f compose.test.yaml run --rm --no-deps test -q -m "not integration"
 ```

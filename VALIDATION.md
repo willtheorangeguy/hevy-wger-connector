@@ -44,7 +44,8 @@ documentation changes; synchronization code did not change.
   created separately and removed after the integration runner; the demo user is
   preserved. Production `.env` contains no test account credentials.
 - Release preparation passed `actionlint 1.7.12` for both GitHub workflows and
-  validated `compose.ghcr.yaml`. The release metadata command accepted `v0.1.0`
+  validated the published-image Compose file (now `docker-compose.yml`). The
+  release metadata command accepted `v0.1.0`
   and generated the expected lowercase GHCR image path. The rebuilt packaged CLI
   starts successfully and runs with UID 10001.
 - A local multi-platform Buildx build completed for **linux/amd64** and
@@ -53,6 +54,22 @@ documentation changes; synchronization code did not change.
   Runtime CLI startup was checked on amd64; arm64 was built under emulation.
 - The build backend minimum is setuptools 77, which supports the SPDX license
   expression added for MIT. The package wheel was rebuilt after that adjustment.
+
+## Simplified deployment checks
+
+- The default `docker-compose.yml` uses the published image and does not build.
+  In an isolated folder containing only that file and `.env`, Compose resolved
+  successfully and the packaged CLI started. The check used the locally built
+  image in place of the not-yet-published GHCR image.
+- The wger add-on file merged with the existing harness Compose file while
+  retaining its project name. Its connector reached the real wger version API
+  at `http://web:8000` over the shared Docker network (HTTP 200), running as UID
+  10001. Only synthetic credential values were passed; this connectivity check
+  made no workout writes or Hevy requests.
+- Both standalone/source-build configurations and the add-on example passed
+  Compose validation, and both workflows passed actionlint after adding release
+  setup-file uploads. Temporary test containers and their newly created volumes
+  were removed; the wger harness stayed running.
 
 ## Limits of validation
 

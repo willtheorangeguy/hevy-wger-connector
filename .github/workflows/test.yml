@@ -15,6 +15,15 @@ jobs:
           python-version: '3.12'
       - run: pip install -r requirements.lock && pip install --no-deps .
       - run: pytest -q -m 'not integration' --junitxml=reports/unit.xml
+      - name: Validate deployment examples
+        env:
+          HEVY_API_KEY: mock-hevy-key
+          HEVY_WGER_TOKEN: mock-wger-token
+        run: |
+          cp .env.example .env
+          docker compose config --quiet
+          docker compose -f compose.build.yaml config --quiet
+          docker compose -f examples/docker-compose.wger.yml config --quiet
       - name: Build and smoke-test container
         run: |
           docker build --tag hevy-wger-connector:ci .
