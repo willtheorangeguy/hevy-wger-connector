@@ -47,6 +47,12 @@ documentation changes; synchronization code did not change.
   validated `compose.ghcr.yaml`. The release metadata command accepted `v0.1.0`
   and generated the expected lowercase GHCR image path. The rebuilt packaged CLI
   starts successfully and runs with UID 10001.
+- A local multi-platform Buildx build completed for **linux/amd64** and
+  **linux/arm64**, including SBOM generation and maximum-mode provenance for
+  both platforms. Its OCI archive is ignored at `reports/release-image.oci.tar`.
+  Runtime CLI startup was checked on amd64; arm64 was built under emulation.
+- The build backend minimum is setuptools 77, which supports the SPDX license
+  expression added for MIT. The package wheel was rebuilt after that adjustment.
 
 ## Limits of validation
 
@@ -56,3 +62,6 @@ the user configures keys. The background scheduling loop and Docker health comma
 are included; the reported integration cases invoke the same sync engine directly.
 Other wger releases have not been tested. Check required API compatibility before
 using a different release.
+
+GitHub release events, `GITHUB_TOKEN` permissions and GHCR uploads have not been
+executed: this preparation created no GitHub repository, release or remote image.
