@@ -1,16 +1,26 @@
 name: Connector tests
-on: [push, pull_request, workflow_dispatch]
+on: [push, pull_request, workflow_dispatch, workflow_call]
+permissions:
+  contents: read
 jobs:
   unit:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
       - run: pip install -r requirements.lock && pip install --no-deps .
       - run: pytest -q -m 'not integration' --junitxml=reports/unit.xml
-      - uses: actions/upload-artifact@v4
+      - name: Build and smoke-test container
+        run: |
+          docker build --tag hevy-wger-connector:ci .
+          docker run --rm hevy-wger-connector:ci --help
+          test "$(docker run --rm --entrypoint id hevy-wger-connector:ci -u)" = 10001
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: unit-reports
@@ -21,20 +31,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: hevy-wger-connector
-      - uses: actions/checkout@v4
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ vars.WGER_HARNESS_REPOSITORY }}
           token: ${{ secrets.WGER_HARNESS_TOKEN || github.token }}
           path: wger-addon-harness
-      - uses: actions/setup-python@v5
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
       - run: python test_harness.py
         working-directory: hevy-wger-connector
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: integration-reports
