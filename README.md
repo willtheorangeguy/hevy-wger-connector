@@ -54,7 +54,7 @@ Read the [documentation site](https://williamvdg.me/hevy-wger-connector/) or bro
 
 ## Support
 
-Open a [GitHub Discussion](https://github.com/willtheorangeguy/hevy-wger-connector/discussions/new) or file an [issue](https://github.com/willtheorangeguy/hevy-wger-connector/issues/new/choose).
+Open an [issue](https://github.com/willtheorangeguy/hevy-wger-connector/issues/new/choose).
 
 ## Contributing
 

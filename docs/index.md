@@ -37,4 +37,4 @@ Follow [getting started](getting-started.md) to approve actual exercise IDs befo
 
 ## Support
 
-Open a [discussion](https://github.com/willtheorangeguy/hevy-wger-connector/discussions/new) or an [issue](https://github.com/willtheorangeguy/hevy-wger-connector/issues/new/choose).
+Open an [issue](https://github.com/willtheorangeguy/hevy-wger-connector/issues/new/choose).
