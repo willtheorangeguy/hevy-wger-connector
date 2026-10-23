@@ -1,0 +1,36 @@
+INHERIT: .mkdocs-shared/shared/mkdocs.base.yml
+site_name: Hevy → wger connector
+site_description: Import Hevy strength history and saved routines into wger with reviewed
+  mappings and durable recovery.
+site_author: willtheorangeguy
+site_url: https://williamvdg.me/hevy-wger-connector/
+repo_url: https://github.com/willtheorangeguy/hevy-wger-connector
+repo_name: willtheorangeguy/hevy-wger-connector
+edit_uri: edit/main/docs/
+nav:
+- Home: index.md
+- Getting started: getting-started.md
+- Installation: installation.md
+- Configuration: configuration.md
+- Usage: usage.md
+- Deployment: deployment.md
+- Recovery: recovery.md
+- Architecture: architecture.md
+- API: api.md
+- Development: development.md
+- Testing: testing.md
+- CI/CD: ci-cd.md
+- FAQ: faq.md
+- Troubleshooting: troubleshooting.md
+- Roadmap: roadmap.md
+- About:
+  - Changelog: changelog.md
+  - License: license.md
+  - Contributing: https://github.com/willtheorangeguy/.github/blob/main/CONTRIBUTING.md
+  - Code of conduct: https://github.com/willtheorangeguy/.github/blob/main/CODE_OF_CONDUCT.md
+  - Security: https://github.com/willtheorangeguy/.github/blob/main/SECURITY.md
+exclude_docs: 'docs.instructions.md
+
+  internal/
+
+  '
